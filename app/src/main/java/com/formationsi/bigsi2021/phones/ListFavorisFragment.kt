@@ -45,8 +45,8 @@ class ListFavorisFragment : Fragment() {
 
 
             viewModel = ViewModelProvider(this).get(ListFavorisViewModel::class.java)
-            val x = viewModel.getLocalContacts(activity?.application)
-            x.observe(viewLifecycleOwner,{
+            viewModel.prepareLocalContacts(activity?.application)
+            viewModel.mylistphone.observe(viewLifecycleOwner,{
                     adapter = RecycleAdapterFavoris(it)
                     recycleview.adapter = adapter
             })
