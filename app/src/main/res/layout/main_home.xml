@@ -15,18 +15,21 @@
             android:id="@+id/tab_list_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:icon="@android:drawable/stat_sys_phone_call_on_hold"
             android:text="Phones" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/tab_list_favoris"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:icon="@android:drawable/btn_star_big_on"
             android:text="Favoris" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/tab_list_groups"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:icon="@android:drawable/ic_menu_myplaces"
             android:text="Groups" />
     </com.google.android.material.tabs.TabLayout>
 

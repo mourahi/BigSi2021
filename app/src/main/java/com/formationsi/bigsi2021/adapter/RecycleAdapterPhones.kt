@@ -1,5 +1,6 @@
 package com.formationsi.bigsi2021.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,7 @@ import com.formationsi.bigsi2021.R
 import com.formationsi.bigsi2021.adapter.RecycleAdapterPhones.MyViewHolder
 import com.formationsi.bigsi2021.db.School
 
-class RecycleAdapterPhones( private val mylist:List<School>) : RecyclerView.Adapter<MyViewHolder>(){
+class RecycleAdapterPhones( private val mylist: ArrayList<MutableMap<String, String>>) : RecyclerView.Adapter<MyViewHolder>(){
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
             return MyViewHolder.create(parent)
@@ -17,6 +18,7 @@ class RecycleAdapterPhones( private val mylist:List<School>) : RecyclerView.Adap
 
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
             val current = mylist[position]
+            Log.d("adil","current = $current")
             holder.bind(current)
         }
 
@@ -26,10 +28,10 @@ class RecycleAdapterPhones( private val mylist:List<School>) : RecyclerView.Adap
             private val num_phone: TextView = itemView.findViewById(R.id.txt_num_phone)
 
 
-            fun bind(school: School) {
-                name_school.text = school.name_school
-                name_director.text = school.name_director
-                num_phone.text = school.num_phone
+            fun bind(item: MutableMap<String, String>) {
+                name_school.text = item["ecole"]
+                name_director.text = item["nom"]
+                num_phone.text = item["tel"]
             }
 
             companion object {

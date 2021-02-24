@@ -65,5 +65,6 @@ abstract class SchoolDatabase : RoomDatabase() {
             s = School("benhima","sabaa","06777")
             schoolDao.insert(s)
         }
+
     }
 }

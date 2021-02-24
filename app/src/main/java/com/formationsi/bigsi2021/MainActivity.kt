@@ -3,6 +3,9 @@ package com.formationsi.bigsi2021
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.Icon
+import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -21,6 +24,10 @@ import com.formationsi.bigsi2021.phones.ListPhonesViewModel
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.util.function.IntConsumer
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -40,6 +47,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         myviewmodel.getshcools().observe(this, {
             Log.d("adil", "it=  $it")
         })
+
 
         drawerLayout = findViewById(R.id.drawerlayout)
         val actionBarDrawerToggle =

@@ -3,6 +3,7 @@ package com.formationsi.bigsi2021.phones
 import android.app.Application
 import android.content.ContentResolver
 import android.provider.ContactsContract
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Dispatchers
@@ -10,7 +11,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class ListFavorisViewModel : ViewModel() {
-     var mylistphone = MutableLiveData<List<NumerPhone>>()
+    var mylistphone = MutableLiveData<List<NumerPhone>>()
     // TODO: Implement the ViewModel
 
     fun prepareLocalContacts(application: Application?) {
@@ -22,6 +23,9 @@ class ListFavorisViewModel : ViewModel() {
                 ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null
             )
+            Log.d("adil", "count = ${cur?.count}")
+
+
             if (cur?.count ?: 0 > 0) {
                 while (cur != null && cur.moveToNext()) {
                     val id = cur.getString(
@@ -52,14 +56,17 @@ class ListFavorisViewModel : ViewModel() {
                                 )
                             )
                             listphone.add(NumerPhone(name, phoneNo))
+                            GlobalScope.launch(Dispatchers.Main) { mylistphone.value = listphone }
+
                         }
                         pCur.close()
                     }
                 }
             }
             cur?.close()
-GlobalScope.launch(Dispatchers.Main) { mylistphone.value = listphone }
+//GlobalScope.launch(Dispatchers.Main) { mylistphone.value = listphone }
 
         }
     }
+
 }
