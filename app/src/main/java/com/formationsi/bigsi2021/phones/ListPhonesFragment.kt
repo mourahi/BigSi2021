@@ -23,14 +23,9 @@ class ListPhonesFragment : Fragment() {
         fun newInstance() = ListPhonesFragment()
     }
 
-    private var mylist:List<School> =  listOf()
+    private var mylist: List<School> = listOf()
     private lateinit var recycle: RecyclerView
     private lateinit var adapter: RecycleAdapterPhones
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        myviewmodel.getDataSheet()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,15 +41,12 @@ class ListPhonesFragment : Fragment() {
         recycle.layoutManager = LinearLayoutManager(view.context)
         adapter = RecycleAdapterPhones(mylist)
         recycle.adapter = adapter
-        myviewmodel.getDataSheet().observe(viewLifecycleOwner, {
-            mylist = if(!it.isNullOrEmpty()) it else mylist
+        myviewmodel.getData().observe(viewLifecycleOwner, {
+            mylist = if (!it.isNullOrEmpty()) it else mylist
             adapter = RecycleAdapterPhones(mylist)
             recycle.adapter = adapter
 
         })
-
-
-
 
 
     }

@@ -1,5 +1,8 @@
 package com.formationsi.bigsi2021.db
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
@@ -16,9 +19,25 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 
-class SchoolRepository(private val schoolDao: SchoolDao) {
+class SchoolRepository(private val schoolDao: SchoolDao, private val context: Context) {
     private var _datasheet = MutableLiveData<List<School>>()
-    val allSchool: LiveData<List<School>> = schoolDao.getAllSchool()
+
+    fun getData(): LiveData<List<School>> {
+        schoolDao.getAllSchool().observeForever { t ->
+            if (!t.isNullOrEmpty()) {
+                _datasheet.value = t
+            } else if (isConnected()) {
+                getGoogleSheetData().observeForever { i ->
+                    if (!i.isNullOrEmpty()) {
+                       insertMultiple(i)
+                        _datasheet.value = i
+                        Log.d("adil", "c'est OK POUR INSERT MUTIPLE it=$i")
+                    }
+                }
+            }
+        }
+        return _datasheet
+    }
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
@@ -26,11 +45,22 @@ class SchoolRepository(private val schoolDao: SchoolDao) {
         schoolDao.insert(school)
     }
 
-    fun getGoogleSheetData(): MutableLiveData<List<School>> {
+    @WorkerThread
+    fun insertMultiple(s: List<School>) {
+        schoolDao.insertMutliple(s)
+    }
+
+
+    private fun isConnected(): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+        return activeNetwork?.isConnectedOrConnecting == true
+    }
+
+    private fun getGoogleSheetData(): MutableLiveData<List<School>> {
         getJSONArrayFromInternet()
         return _datasheet
     }
-
 
     private fun getJSONArrayFromInternet(
         idSheet: String = "1F49X3Jo823vUJ9hrr1vheCeCI2LhCIN_gf9sxMrgK5k"
@@ -89,7 +119,7 @@ class SchoolRepository(private val schoolDao: SchoolDao) {
 
     private fun mapToObjet(src: ArrayList<MutableMap<String, String>>): List<School> {
         val resulat: MutableList<School> = mutableListOf()
-        if (src != null && src.size > 0) {
+        if (src.size > 0) {
             src.forEach {
                 resulat.add(
                     School(

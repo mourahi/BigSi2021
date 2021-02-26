@@ -29,6 +29,9 @@ interface SchoolDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(s: School)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertMutliple(s: List<School>)
+
     @Update
     fun update(s: School)
 
@@ -59,7 +62,7 @@ abstract class SchoolDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     SchoolDatabase::class.java,
-                    "bigs_imourahi2021"
+                    "bigs_imourahi2021v2"
                 ).allowMainThreadQueries()
                     .build()
                 INSTANCE = instance

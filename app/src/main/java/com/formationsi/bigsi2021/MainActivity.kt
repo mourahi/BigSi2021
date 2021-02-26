@@ -12,6 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.formationsi.bigsi2021.adapter.AdapterTabs
 import com.formationsi.bigsi2021.others.OtherActivity
@@ -22,6 +23,9 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawerLayout: DrawerLayout
+    val principalViewModel:PrincipalViewModel by lazy {
+        ViewModelProvider(this).get(PrincipalViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +64,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             requestPermission()
         }
+
+
     }
 
     private val REQUEST_READ_CONTACTS = 10

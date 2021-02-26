@@ -59,4 +59,3 @@ class ListLocalFragment : Fragment() {
 
 }
 
-data class NumerPhone( val name:String, val phoneNo:String)
