@@ -2,10 +2,7 @@ package com.formationsi.bigsi2021.phones
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.formationsi.bigsi2021.SchoolApplication
 import com.formationsi.bigsi2021.db.School
 import com.formationsi.bigsi2021.db.SchoolRepository
@@ -15,39 +12,37 @@ import kotlinx.coroutines.launch
 
 class ListPhonesViewModel(application: Application) : AndroidViewModel(application) {
     private lateinit var mydata: LiveData<List<School>>
-    lateinit var datasheet : MutableLiveData<ArrayList<MutableMap<String, String>>>
+    private var _datasheet = MutableLiveData<ArrayList<MutableMap<String, String>>>()
+   private  lateinit var  myapp:Application
+   var i = 0
 
     val myrepository: SchoolRepository by lazy {
-        (application as SchoolApplication).goodrepository
+        myapp = (application as SchoolApplication)
+        (myapp as SchoolApplication).goodrepository
+    }
+    init {
+        myDataSheet()
     }
 
+    fun getDataSheet(): MutableLiveData<ArrayList<MutableMap<String, String>>> {
+        return _datasheet
+    }
     fun getshcools(): LiveData<List<School>> {
-        //mydata.value = listOf(School("","",""))
         mydata = myrepository.allSchool
         return mydata
     }
 
     fun insert(school: School) {
         GlobalScope.launch {
-            myrepository.insert(school)
+           myrepository.insert(school)
         }
     }
 
-     fun getDataSheet() {
-         GlobalScope.launch {
-             datasheet.value = arrayListOf(
-                 mutableMapOf(
-                     "nom" to "adil",
-                     "ecole" to "hassan 2",
-                     "tel" to "06666"
-                 )
-             )
+     private fun myDataSheet() {
+         viewModelScope.launch {
+             i = i + 1
+             Log.d("adimou", "i = $i")
+             _datasheet =  myrepository.getGoogleSheetData()
+             }
          }
-
-/*         GlobalScope.launch {
-             datasheet.value = myrepository.getGoogleSheetData()
-         }*/
-        Log.d("adil", "dans gaasheet = ${datasheet.value}")
-    }
-
 }

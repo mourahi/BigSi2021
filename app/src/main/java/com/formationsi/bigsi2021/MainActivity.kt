@@ -32,8 +32,8 @@ import java.util.function.IntConsumer
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     lateinit var drawerLayout: DrawerLayout
-    lateinit var repository: SchoolRepository
-    lateinit var myviewmodel: ListPhonesViewModel
+   // lateinit var repository: SchoolRepository
+    //lateinit var myviewmodel: ListPhonesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,12 +41,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        repository = (application as SchoolApplication).goodrepository
+        //repository = (application as SchoolApplication).goodrepository
 
-        myviewmodel = ViewModelProvider(this).get(ListPhonesViewModel::class.java)
+/*        myviewmodel = ViewModelProvider(this).get(ListPhonesViewModel::class.java)
         myviewmodel.getshcools().observe(this, {
             Log.d("adil", "it=  $it")
-        })
+        })*/
 
 
         drawerLayout = findViewById(R.id.drawerlayout)

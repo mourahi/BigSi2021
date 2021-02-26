@@ -18,7 +18,7 @@ class RecycleAdapterPhones( private val mylist: ArrayList<MutableMap<String, Str
 
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
             val current = mylist[position]
-            Log.d("adil","current = $current")
+          //  Log.d("adil","current = $current")
             holder.bind(current)
         }
 

@@ -30,7 +30,7 @@
         android:text="TextView"
         android:textColor="#3F51B5"
         android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/txt_name_school_favoris"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_name_school_favoris" />
 
     <TextView

@@ -16,19 +16,20 @@ import com.formationsi.bigsi2021.adapter.RecycleAdapterPhones
 
 
 class ListPhonesFragment : Fragment() {
-    private lateinit var myviewmodel: ListPhonesViewModel
+    private val myviewmodel: ListPhonesViewModel by lazy {
+        ViewModelProvider(this).get(ListPhonesViewModel::class.java)
+    }
 
     companion object {
         fun newInstance() = ListPhonesFragment()
     }
 
-    private lateinit var mylist:ArrayList<MutableMap<String, String>>
+    private var mylist =  arrayListOf(mutableMapOf("nom" to "adil", "ecole" to "hassan 2", "tel" to "06666"))
     private lateinit var recycle: RecyclerView
     private lateinit var adapter: RecycleAdapterPhones
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        myviewmodel = ViewModelProvider(this).get(ListPhonesViewModel::class.java)
         myviewmodel.getDataSheet()
     }
 
@@ -46,9 +47,8 @@ class ListPhonesFragment : Fragment() {
         recycle.layoutManager = LinearLayoutManager(view.context)
         adapter = RecycleAdapterPhones(mylist)
         recycle.adapter = adapter
-        myviewmodel.datasheet.observe(viewLifecycleOwner, {
-            mylist = it
-            Log.d("adil","it de l'adpateur = $it")
+        myviewmodel.getDataSheet().observe(viewLifecycleOwner, {
+            mylist = if(!it.isNullOrEmpty()) it else mylist
             adapter = RecycleAdapterPhones(mylist)
             recycle.adapter = adapter
 

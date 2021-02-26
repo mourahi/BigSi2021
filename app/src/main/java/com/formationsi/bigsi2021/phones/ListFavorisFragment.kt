@@ -21,14 +21,16 @@ class ListFavorisFragment : Fragment() {
         fun newInstance() = ListFavorisFragment()
     }
 
-    private lateinit var viewModel: ListFavorisViewModel
+    private val viewModel: ListFavorisViewModel by lazy {
+        ViewModelProvider(this).get(ListFavorisViewModel::class.java)
+    }
+
     lateinit var recycleview:RecyclerView
     lateinit var  progressBar:ProgressBar
     lateinit var adapter: RecycleAdapterFavoris
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        viewModel = ViewModelProvider(this).get(ListFavorisViewModel::class.java)
         viewModel.prepareLocalContacts(activity?.application)
     }
 
