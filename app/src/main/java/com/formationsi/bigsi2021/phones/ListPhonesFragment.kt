@@ -2,17 +2,16 @@ package com.formationsi.bigsi2021.phones
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.formationsi.bigsi2021.R
 import com.formationsi.bigsi2021.adapter.RecycleAdapterPhones
+import com.formationsi.bigsi2021.db.School
 
 
 class ListPhonesFragment : Fragment() {
@@ -24,7 +23,7 @@ class ListPhonesFragment : Fragment() {
         fun newInstance() = ListPhonesFragment()
     }
 
-    private var mylist =  arrayListOf(mutableMapOf("nom" to "adil", "ecole" to "hassan 2", "tel" to "06666"))
+    private var mylist:List<School> =  listOf()
     private lateinit var recycle: RecyclerView
     private lateinit var adapter: RecycleAdapterPhones
 

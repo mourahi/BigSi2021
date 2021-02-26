@@ -7,41 +7,42 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.formationsi.bigsi2021.R
 import com.formationsi.bigsi2021.adapter.RecycleAdapterFavoris.MyViewHolder
-import com.formationsi.bigsi2021.phones.NumerPhone
+import com.formationsi.bigsi2021.db.School
 
-class RecycleAdapterFavoris(private val mylist:List<NumerPhone>) : RecyclerView.Adapter<MyViewHolder>(){
+class RecycleAdapterFavoris(private val mylist: List<School>) :
+    RecyclerView.Adapter<MyViewHolder>() {
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-            return MyViewHolder.create(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        return MyViewHolder.create(parent)
+    }
+
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        val current = mylist[position]
+        holder.bind(current)
+    }
+
+    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val name_school: TextView = itemView.findViewById(R.id.txt_name_school_favoris)
+        private val name_director: TextView = itemView.findViewById(R.id.txt_name_director_favoris)
+
+
+        fun bind(school: School) {
+            name_school.text = school.nom
+            name_director.text = school.tel
         }
 
-        override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-            val current = mylist[position]
-            holder.bind(current)
-        }
-
-         class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            private val name_school: TextView = itemView.findViewById(R.id.txt_name_school_favoris)
-            private val name_director: TextView = itemView.findViewById(R.id.txt_name_director_favoris)
-
-
-            fun bind(school: NumerPhone) {
-                name_school.text = school.name
-                name_director.text = school.phoneNo
+        companion object {
+            fun create(parent: ViewGroup): MyViewHolder {
+                val view: View = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_recycle_local, parent, false)
+                return MyViewHolder(view)
             }
-
-            companion object {
-                fun create(parent: ViewGroup): MyViewHolder {
-                    val view: View = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_recycle_favoris, parent, false)
-                    return MyViewHolder(view)
-                }
-            }
         }
+    }
 
     override fun getItemCount(): Int {
         return mylist.size
     }
 
 
- }
+}

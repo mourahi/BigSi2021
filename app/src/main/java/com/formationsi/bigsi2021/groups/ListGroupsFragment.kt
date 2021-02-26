@@ -1,11 +1,11 @@
 package com.formationsi.bigsi2021.groups
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.formationsi.bigsi2021.R
 
 class ListGroupsFragment : Fragment() {
@@ -23,10 +23,9 @@ class ListGroupsFragment : Fragment() {
         return inflater.inflate(R.layout.list_groups_fragment, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ListGroupsViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
 }

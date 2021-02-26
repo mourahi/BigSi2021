@@ -1,7 +1,6 @@
 package com.formationsi.bigsi2021.phones
 
 import android.content.Context
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,19 +14,19 @@ import com.formationsi.bigsi2021.R
 import com.formationsi.bigsi2021.adapter.RecycleAdapterFavoris
 
 
-class ListFavorisFragment : Fragment() {
+class ListLocalFragment : Fragment() {
 
     companion object {
-        fun newInstance() = ListFavorisFragment()
+        fun newInstance() = ListLocalFragment()
     }
 
     private val viewModel: ListFavorisViewModel by lazy {
         ViewModelProvider(this).get(ListFavorisViewModel::class.java)
     }
 
-    lateinit var recycleview:RecyclerView
-    lateinit var  progressBar:ProgressBar
-    lateinit var adapter: RecycleAdapterFavoris
+    private lateinit var recycleview:RecyclerView
+    private lateinit var  progressBar:ProgressBar
+    private lateinit var adapter: RecycleAdapterFavoris
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -38,7 +37,7 @@ class ListFavorisFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.list_favoris_fragment, container, false)
+        return inflater.inflate(R.layout.list_local_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,7 +45,7 @@ class ListFavorisFragment : Fragment() {
         recycleview = view.findViewById(R.id.recycle_favoris)
         progressBar = view.findViewById(R.id.progressBar)
         recycleview.layoutManager = LinearLayoutManager(context)
-        adapter = RecycleAdapterFavoris(listOf(NumerPhone("","")))
+        adapter = RecycleAdapterFavoris(listOf())
         recycleview.adapter = adapter
 
         viewModel.mylistphone.observe(viewLifecycleOwner,{

@@ -1,15 +1,49 @@
 package com.formationsi.bigsi2021.db
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.lifecycle.LiveData
+import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.squareup.moshi.Json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [School::class],version = 1)
+
+@Entity(tableName = "tschool")
+data class School(
+    @PrimaryKey
+    @Json(name = "nom") val nom: String = "",
+    @Json(name = "tel") val tel: String = "",
+    @Json(name = "ecole") val ecole: String = "",
+    @Json(name = "gresa") val gresa: String = "",
+    @Json(name = "commune") val commune: String = "",
+    @Json(name = "fonction") val fonction: String = "",
+    @Json(name = "cycle") val cycle: String = "",
+    @Json(name = "email") val email: String = "",
+    @Json(name = "geo") val geo: String = ""
+)
+
+@Dao
+interface SchoolDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(s: School)
+
+    @Update
+    fun update(s: School)
+
+    @Delete
+    fun delete(s: School)
+
+    @Query("DELETE FROM tschool")
+    fun deleteAll()
+
+    @Query("SELECT * FROM tschool")
+    fun getAllSchool(): LiveData<List<School>>
+
+}
+
+@Database(entities = [School::class], version = 1)
 abstract class SchoolDatabase : RoomDatabase() {
     abstract fun schoolDao(): SchoolDao
 
@@ -21,11 +55,11 @@ abstract class SchoolDatabase : RoomDatabase() {
             context: Context
         ): SchoolDatabase {
 
-            return  INSTANCE ?: synchronized(this) {
+            return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     SchoolDatabase::class.java,
-                    "mourahi_db3"
+                    "bigs_imourahi2021"
                 ).allowMainThreadQueries()
                     .build()
                 INSTANCE = instance
@@ -33,16 +67,12 @@ abstract class SchoolDatabase : RoomDatabase() {
                 instance
             }
         }
+
         private class SchoolDatabaseCallback(
             private val scope: CoroutineScope
         ) : RoomDatabase.Callback() {
-            /**
-             * Override the onCreate method to populate the database.
-             */
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
-                // If you want to keep the data through app restarts,
-                // comment out the following line.
                 INSTANCE?.let { database ->
                     scope.launch(Dispatchers.IO) {
                         populateDatabase(database.schoolDao())
@@ -51,20 +81,10 @@ abstract class SchoolDatabase : RoomDatabase() {
             }
         }
 
-        /**
-         * Populate the database in a new coroutine.
-         * If you want to start with more words, just add them.
-         */
-        suspend fun populateDatabase(schoolDao: SchoolDao) {
-            // Start the app with a clean database every time.
-            // Not needed if you only populate on creation.
+        fun populateDatabase(schoolDao: SchoolDao) {
             schoolDao.deleteAll()
-
-            var s = School("hassan2","abderhaim","066666")
-            schoolDao.insert(s)
-            s = School("benhima","sabaa","06777")
-            schoolDao.insert(s)
+            /* var s = School("عادل موراحي","","","منظومة الاعلام",)
+            schoolDao.insert(s) */
         }
-
     }
 }

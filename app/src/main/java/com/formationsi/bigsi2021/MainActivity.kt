@@ -3,9 +3,6 @@ package com.formationsi.bigsi2021
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.Icon
-import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -15,25 +12,16 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.formationsi.bigsi2021.adapter.AdapterTabs
-import com.formationsi.bigsi2021.db.SchoolRepository
 import com.formationsi.bigsi2021.others.OtherActivity
-import com.formationsi.bigsi2021.phones.ListPhonesViewModel
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.util.function.IntConsumer
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    lateinit var drawerLayout: DrawerLayout
-   // lateinit var repository: SchoolRepository
-    //lateinit var myviewmodel: ListPhonesViewModel
+    private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,13 +29,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        //repository = (application as SchoolApplication).goodrepository
-
-/*        myviewmodel = ViewModelProvider(this).get(ListPhonesViewModel::class.java)
-        myviewmodel.getshcools().observe(this, {
-            Log.d("adil", "it=  $it")
-        })*/
-
 
         drawerLayout = findViewById(R.id.drawerlayout)
         val actionBarDrawerToggle =
@@ -65,23 +46,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val tablayout = findViewById<TabLayout>(R.id.home_tab)
         TabLayoutMediator(tablayout, viewPager2) { tab, pos ->
             when (pos) {
-                1 -> tab.text = "Favoris"
+                1 -> tab.text = "Local"
                 2 -> tab.text = "Groups"
                 else -> tab.text = "Phones"
             }
         }.attach()
         viewPager2.isUserInputEnabled = false // disable swip of tabs
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
             == PackageManager.PERMISSION_GRANTED
         ) {
             //ok
         } else {
-            requestPermission();
+            requestPermission()
         }
     }
 
-    val REQUEST_READ_CONTACTS = 10
+    private val REQUEST_READ_CONTACTS = 10
     private fun requestPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
@@ -117,7 +98,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             REQUEST_READ_CONTACTS -> {
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // mobileArray = getAllContacts()
                 } else {
                     // permission denied,Disable the

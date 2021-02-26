@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.room.*
-import com.squareup.moshi.Json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -18,35 +16,8 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 
-@Entity(tableName = "tableschool")
-data class School(
-    @PrimaryKey
-    @Json(name = "price") var name_school: String,
-    @Json(name = "id") var name_director: String,
-    @Json(name = "img_src") var num_phone: String
-)
-
-@Dao
-interface SchoolDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(s: School)
-
-    @Update
-    fun update(s: School)
-
-    @Delete
-    fun delete(s: School)
-
-    @Query("DELETE FROM tableschool")
-    fun deleteAll()
-
-    @Query("SELECT * FROM tableschool")
-    fun getAllSchool(): LiveData<List<School>>
-
-}
-
 class SchoolRepository(private val schoolDao: SchoolDao) {
-    private var _datasheet = MutableLiveData<ArrayList<MutableMap<String, String>>>()
+    private var _datasheet = MutableLiveData<List<School>>()
     val allSchool: LiveData<List<School>> = schoolDao.getAllSchool()
 
     @Suppress("RedundantSuspendModifier")
@@ -55,7 +26,7 @@ class SchoolRepository(private val schoolDao: SchoolDao) {
         schoolDao.insert(school)
     }
 
-    fun getGoogleSheetData(): MutableLiveData<ArrayList<MutableMap<String, String>>> {
+    fun getGoogleSheetData(): MutableLiveData<List<School>> {
         getJSONArrayFromInternet()
         return _datasheet
     }
@@ -64,7 +35,7 @@ class SchoolRepository(private val schoolDao: SchoolDao) {
     private fun getJSONArrayFromInternet(
         idSheet: String = "1F49X3Jo823vUJ9hrr1vheCeCI2LhCIN_gf9sxMrgK5k"
     ) {
-        Log.d("adimou","getJSONArrayFromInternet")
+        Log.d("adimou", "getJSONArrayFromInternet")
         //_state.value = "START"
         val myLocalList: ArrayList<MutableMap<String, String>> = ArrayList()
         val url =
@@ -81,7 +52,7 @@ class SchoolRepository(private val schoolDao: SchoolDao) {
                 }
                 val res =
                     JSONObject(stringBuilder.toString()).getJSONObject("feed").getJSONArray("entry")
-                Log.d("adil", "recherche connexion  length=" + res.length())
+                Log.d("adil", "RECHERCHE connexion  length=" + res.length())
                 var mycol = mutableListOf<String>()
                 for (i in 0 until res.length()) {
                     val obj: MutableMap<String, String> = mutableMapOf()
@@ -98,24 +69,38 @@ class SchoolRepository(private val schoolDao: SchoolDao) {
                     }
                     myLocalList.add(obj)
                 }
-                //   Log.d("mourahi", "final = $myLocalList")
-                // _state.value = "SUCCES"
-                GlobalScope.launch(Dispatchers.Main) { _datasheet.value = myLocalList }
 
             } catch (e: Exception) {
-                Log.d("adil", "probleme recupereation depuis internet exception = " + e.message)
+                Log.d("adil", "PROBLEME récuperation depuis internet exception = " + e.message)
                 // _state.value = "Erreur Serveur"
                 GlobalScope.launch(Dispatchers.Main) {
-                    _datasheet.value = arrayListOf(mutableMapOf())
+                    _datasheet.value = listOf()
                 }
             } finally {
                 urlConnection.disconnect()
                 Log.d("adil", "deconnnexion")
                 GlobalScope.launch(Dispatchers.Main) {
-                    _datasheet.value = myLocalList
-                    Log.d("adil", "resultat du serveur === $myLocalList")
+                    _datasheet.value = mapToObjet(myLocalList)
+                    // Log.d("adil", "resultat du serveur === $myLocalList")
                 }
             }
         }
     }
+
+    private fun mapToObjet(src: ArrayList<MutableMap<String, String>>): List<School> {
+        val resulat: MutableList<School> = mutableListOf()
+        if (src != null && src.size > 0) {
+            src.forEach {
+                resulat.add(
+                    School(
+                        it["nom"].toString(),
+                        it["tel"].toString(),
+                        it["ecole"].toString()
+                    )
+                )
+            }
+        }
+        return resulat
+    }
+
 }
