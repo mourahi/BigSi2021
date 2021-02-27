@@ -4,24 +4,24 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.squareup.moshi.Json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 
 @Entity(tableName = "tschool")
 data class School(
     @PrimaryKey
-    @Json(name = "nom") val nom: String = "",
-    @Json(name = "tel") val tel: String = "",
-    @Json(name = "ecole") val ecole: String = "",
-    @Json(name = "gresa") val gresa: String = "",
-    @Json(name = "commune") val commune: String = "",
-    @Json(name = "fonction") val fonction: String = "",
-    @Json(name = "cycle") val cycle: String = "",
-    @Json(name = "email") val email: String = "",
-    @Json(name = "geo") val geo: String = ""
+    val nom: String = "",
+    val tel: String = "",
+    val ecole: String = "",
+    val gresa: String = "",
+    val commune: String = "",
+    val fonction: String = "",
+    val cycle: String = "",
+    val email: String = "",
+    val geo: String = ""
 )
 
 @Dao
@@ -62,7 +62,7 @@ abstract class SchoolDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     SchoolDatabase::class.java,
-                    "bigs_imourahi2021v2"
+                    "bigs_imourahi2021v5"
                 ).allowMainThreadQueries()
                     .build()
                 INSTANCE = instance

@@ -1,6 +1,5 @@
 package com.formationsi.bigsi2021.phones
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +14,10 @@ import com.formationsi.bigsi2021.db.School
 
 
 class ListPhonesFragment : Fragment() {
+    private var mylist: List<School> = listOf()
+    private lateinit var recycle: RecyclerView
+    private lateinit var adapter: RecycleAdapterPhones
+
     private val myviewmodel: ListPhonesViewModel by lazy {
         ViewModelProvider(this).get(ListPhonesViewModel::class.java)
     }
@@ -22,10 +25,6 @@ class ListPhonesFragment : Fragment() {
     companion object {
         fun newInstance() = ListPhonesFragment()
     }
-
-    private var mylist: List<School> = listOf()
-    private lateinit var recycle: RecyclerView
-    private lateinit var adapter: RecycleAdapterPhones
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,7 +46,6 @@ class ListPhonesFragment : Fragment() {
             recycle.adapter = adapter
 
         })
-
 
     }
 

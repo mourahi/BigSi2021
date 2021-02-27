@@ -12,7 +12,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.formationsi.bigsi2021.adapter.AdapterTabs
 import com.formationsi.bigsi2021.others.OtherActivity
@@ -23,9 +22,10 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawerLayout: DrawerLayout
-    val principalViewModel:PrincipalViewModel by lazy {
+    private val REQUEST_READ_CONTACTS = 10
+/*    val principalViewModel:PrincipalViewModel by lazy {
         ViewModelProvider(this).get(PrincipalViewModel::class.java)
-    }
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,17 +58,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewPager2.isUserInputEnabled = false // disable swip of tabs
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
-            == PackageManager.PERMISSION_GRANTED
-        ) {
-            //ok
-        } else {
-            requestPermission()
-        }
-
+            == PackageManager.PERMISSION_GRANTED) {  } else { requestPermission() }
 
     }
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        drawerLayout.closeDrawer(GravityCompat.START)
+        when (item.itemId) {
+            R.id.id_menu_other -> {
+                val intent = Intent(this, OtherActivity::class.java)
+                startActivity(intent)
+            }
+            else -> Log.d("adil", "home encore ")
+        }
+        return true
+    }
 
-    private val REQUEST_READ_CONTACTS = 10
     private fun requestPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
@@ -115,16 +119,4 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        drawerLayout.closeDrawer(GravityCompat.START)
-        when (item.itemId) {
-            R.id.id_menu_other -> {
-                val intent = Intent(this, OtherActivity::class.java)
-                startActivity(intent)
-            }
-            else -> Log.d("adil", "home encore ")
-        }
-        return true
-    }
 }
