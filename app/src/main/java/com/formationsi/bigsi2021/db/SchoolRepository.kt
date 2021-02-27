@@ -5,7 +5,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.util.Log
 import androidx.annotation.WorkerThread
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -21,9 +20,6 @@ import java.net.URL
 
 class SchoolRepository(private val schoolDao: SchoolDao, private val context: Context) {
     private var _datasheet = MutableLiveData<List<School>>()
-    var liveDataMerger: MediatorLiveData<*> = MediatorLiveData<Any>()
-    var i = 0
-    var j = 0
 
     fun getData(): MutableLiveData<List<School>> {
          schoolDao.getAllSchool().observeForever { roo ->
@@ -67,7 +63,7 @@ class SchoolRepository(private val schoolDao: SchoolDao, private val context: Co
     private fun getJSONArrayFromInternet(
         idSheet: String = "1F49X3Jo823vUJ9hrr1vheCeCI2LhCIN_gf9sxMrgK5k"
     ): MutableLiveData<List<School>> {
-        var r = MutableLiveData<List<School>>()
+        val r = MutableLiveData<List<School>>()
         Log.d("adimou", "getJSONArrayFromInternet")
         //_state.value = "START"
         val myLocalList: ArrayList<MutableMap<String, String>> = ArrayList()
