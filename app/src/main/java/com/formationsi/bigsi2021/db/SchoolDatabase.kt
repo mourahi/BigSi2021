@@ -6,7 +6,6 @@ import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 
@@ -62,7 +61,7 @@ abstract class SchoolDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     SchoolDatabase::class.java,
-                    "bigs_imourahi2021v5"
+                    "bigs_imourahi2021v8"
                 ).allowMainThreadQueries()
                     .build()
                 INSTANCE = instance

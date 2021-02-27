@@ -11,9 +11,4 @@ class SchoolApplication : Application() {
                 SchoolRepository(database.schoolDao(),this)
         }
 
-/*        override fun onCreate() {
-                super.onCreate()
-                goodrepository.initData()
-        }*/
-
 }

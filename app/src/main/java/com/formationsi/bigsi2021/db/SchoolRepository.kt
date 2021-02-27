@@ -22,6 +22,7 @@ class SchoolRepository(private val schoolDao: SchoolDao, private val context: Co
     private var _datasheet = MutableLiveData<List<School>>()
 
     fun getData(): MutableLiveData<List<School>> {
+        val v = this
          schoolDao.getAllSchool().observeForever { roo ->
              if(!roo.isNullOrEmpty()) {
                  Log.d("adimou"," resulat cherche dans le ROOM")
@@ -55,10 +56,6 @@ class SchoolRepository(private val schoolDao: SchoolDao, private val context: Co
         val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
         return activeNetwork?.isConnectedOrConnecting == true
     }
-
-/*    private fun getGoogleSheetData(): MutableLiveData<List<School>> {
-        return getJSONArrayFromInternet()
-    }*/
 
     private fun getJSONArrayFromInternet(
         idSheet: String = "1F49X3Jo823vUJ9hrr1vheCeCI2LhCIN_gf9sxMrgK5k"

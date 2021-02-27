@@ -4,7 +4,6 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import com.formationsi.bigsi2021.SchoolApplication
 import com.formationsi.bigsi2021.db.School
 import kotlinx.coroutines.GlobalScope
