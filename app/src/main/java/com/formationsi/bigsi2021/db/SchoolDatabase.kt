@@ -32,7 +32,7 @@ interface SchoolDao {
     fun insertMutliple(s: List<School>)
 
     @Query("SELECT * FROM tschool WHERE nom LIKE :txtsearch OR ecole LIKE :txtsearch OR tel LIKE :txtsearch OR gresa LIKE :txtsearch")
-    fun getDataQuery(txtsearch:String): LiveData<List<School>>
+    fun getDataQuery(txtsearch: String): LiveData<List<School>>
 
     @Update
     fun update(s: School)
@@ -64,7 +64,7 @@ abstract class SchoolDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     SchoolDatabase::class.java,
-                    "bigs_imourahi2021v9"
+                    "bigs_imourahi2021v11"
                 ).allowMainThreadQueries()
                     .build()
                 INSTANCE = instance

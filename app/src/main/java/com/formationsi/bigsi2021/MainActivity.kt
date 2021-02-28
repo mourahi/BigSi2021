@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         principalViewModel.getDataPhones("%${txtsearch.toString()}%")
                     }
                     1 -> {
-                        principalViewModel.getLocalContacts(txtsearch.toString())
+                        if(!principalViewModel.templistLocalPhones.value.isNullOrEmpty()) principalViewModel.getLocalContacts(txtsearch.toString())
                     }
                 }
 

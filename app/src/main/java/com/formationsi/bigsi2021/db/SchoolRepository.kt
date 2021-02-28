@@ -32,17 +32,17 @@ class SchoolRepository(private val schoolDao: SchoolDao, private val context: Co
                     Log.d("adimou", " resulat cherche dans le ROOM")
                     _datasheet.value = roo
                 } else if (isConnected()) {
-                    getJSONArrayFromInternet().observeForever { ser ->
-                        Log.d("adimou", " resulat cherche dans le serveur")
-                        _datasheet.value = ser
-                        insertMultiple(ser)
+                    getJSONArrayFromInternet().observeForever {
+                        val a = mapToSchool(it).value
+                       if(!a.isNullOrEmpty()) {
+                           _datasheet.value = a!!
+                           insertMultiple(a)
+                       }
                     }
                 }
             }
         }
-
         return _datasheet
-
     }
 
     @Suppress("RedundantSuspendModifier")
@@ -56,7 +56,6 @@ class SchoolRepository(private val schoolDao: SchoolDao, private val context: Co
         schoolDao.insertMutliple(s)
     }
 
-
     private fun isConnected(): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
@@ -65,11 +64,11 @@ class SchoolRepository(private val schoolDao: SchoolDao, private val context: Co
 
     private fun getJSONArrayFromInternet(
         idSheet: String = "1F49X3Jo823vUJ9hrr1vheCeCI2LhCIN_gf9sxMrgK5k"
-    ): MutableLiveData<List<School>> {
-        val r = MutableLiveData<List<School>>()
+    ): MutableLiveData<ArrayList<MutableMap<String, String>>> {
         Log.d("adimou", "getJSONArrayFromInternet")
         //_state.value = "START"
-        val myLocalList: ArrayList<MutableMap<String, String>> = ArrayList()
+        var myLocalList: ArrayList<MutableMap<String, String>> = ArrayList()
+        val livedataMyLocalList = MutableLiveData<ArrayList<MutableMap<String, String>>>()
         val url =
             URL("https://spreadsheets.google.com/feeds/list/$idSheet/1/public/values?alt=json")
         val urlConnection = url.openConnection() as HttpURLConnection
@@ -106,33 +105,42 @@ class SchoolRepository(private val schoolDao: SchoolDao, private val context: Co
                 Log.d("adil", "PROBLEME récuperation depuis internet exception = " + e.message)
                 // _state.value = "Erreur Serveur"
                 GlobalScope.launch(Dispatchers.Main) {
-                    r.value = listOf()
+                    myLocalList = arrayListOf()
+                    livedataMyLocalList.value = myLocalList
                 }
             } finally {
                 urlConnection.disconnect()
                 Log.d("adil", "deconnnexion")
                 GlobalScope.launch(Dispatchers.Main) {
-                    r.value = mapToObjet(myLocalList)
-                    // Log.d("adil", "resultat du serveur === $myLocalList")
+                    livedataMyLocalList.value = myLocalList
                 }
             }
         }
-        return r
+        return livedataMyLocalList
     }
 
-    private fun mapToObjet(src: ArrayList<MutableMap<String, String>>): List<School> {
-        val resulat: MutableList<School> = mutableListOf()
+    private fun mapToSchool(src: ArrayList<MutableMap<String, String>>): MutableLiveData<List<School>>{
+        Log.d("adil","src = $src")
+        val resulat = MutableLiveData<List<School>>()
+        val li = mutableListOf<School>()
         if (src.size > 0) {
             src.forEach {
-                resulat.add(
+                li.add(
                     School(
                         it["nom"].toString(),
                         it["tel"].toString(),
-                        it["ecole"].toString()
+                        it["ecole"].toString(),
+                        it["gresa"].toString(),
+                        it["commune"].toString(),
+                        it["fonction"].toString(),
+                        it["cycle"].toString(),
+                        it["email"].toString(),
+                        it["geo"].toString()
                     )
                 )
             }
         }
+        resulat.value = li
         return resulat
     }
 
