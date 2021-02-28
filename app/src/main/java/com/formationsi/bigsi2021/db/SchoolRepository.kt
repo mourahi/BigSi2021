@@ -21,20 +21,26 @@ import java.net.URL
 class SchoolRepository(private val schoolDao: SchoolDao, private val context: Context) {
     private var _datasheet = MutableLiveData<List<School>>()
 
-    fun getData(): MutableLiveData<List<School>> {
-        val v = this
-         schoolDao.getAllSchool().observeForever { roo ->
-             if(!roo.isNullOrEmpty()) {
-                 Log.d("adimou"," resulat cherche dans le ROOM")
-                 _datasheet.value = roo
-             } else if(isConnected()){
-                 getJSONArrayFromInternet().observeForever { ser ->
-                     Log.d("adimou"," resulat cherche dans le serveur")
-                     _datasheet.value = ser
-                     insertMultiple(ser)
-                 }
-             }
+    fun getData(txtsearch: String = ""): MutableLiveData<List<School>> {
+        if (txtsearch != "") {
+            schoolDao.getDataQuery(txtsearch).observeForever {
+                _datasheet.value = it
+            }
+        } else {
+            schoolDao.getAllSchool().observeForever { roo ->
+                if (!roo.isNullOrEmpty()) {
+                    Log.d("adimou", " resulat cherche dans le ROOM")
+                    _datasheet.value = roo
+                } else if (isConnected()) {
+                    getJSONArrayFromInternet().observeForever { ser ->
+                        Log.d("adimou", " resulat cherche dans le serveur")
+                        _datasheet.value = ser
+                        insertMultiple(ser)
+                    }
+                }
+            }
         }
+
         return _datasheet
 
     }

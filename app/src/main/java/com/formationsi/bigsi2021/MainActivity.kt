@@ -5,9 +5,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
@@ -22,10 +25,10 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawerLayout: DrawerLayout
+    lateinit var tablayout: TabLayout
     private val REQUEST_READ_CONTACTS = 10
-/*    val principalViewModel:PrincipalViewModel by lazy {
-        ViewModelProvider(this).get(PrincipalViewModel::class.java)
-    }*/
+    private val principalViewModel: PrincipalViewModel by viewModels()
+    private val me = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +50,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val adapterTabs = AdapterTabs(this)
         val viewPager2: ViewPager2 = findViewById(R.id.home_viewpager)
         viewPager2.adapter = adapterTabs
-        val tablayout = findViewById<TabLayout>(R.id.home_tab)
+        tablayout = findViewById(R.id.home_tab)
         TabLayoutMediator(tablayout, viewPager2) { tab, pos ->
             when (pos) {
                 1 -> tab.text = "Local"
@@ -58,9 +61,43 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewPager2.isUserInputEnabled = false // disable swip of tabs
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
-            == PackageManager.PERMISSION_GRANTED) {  } else { requestPermission() }
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+        } else {
+            requestPermission()
+        }
 
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_bar, menu)
+        val search_view = (menu!!.findItem(R.id.id_menu_search).actionView) as SearchView
+
+        search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(txtsearch: String?): Boolean {
+                principalViewModel.getDataPhones("%${txtsearch.toString()}%")
+                return false
+            }
+
+            override fun onQueryTextChange(txtsearch: String?): Boolean {
+                when (tablayout.selectedTabPosition) {
+                    0 -> {
+                        principalViewModel.getDataPhones("%${txtsearch.toString()}%")
+                    }
+                    1 -> {
+                        principalViewModel.getLocalContacts(txtsearch.toString())
+                    }
+                }
+
+
+                return false
+            }
+
+        })
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         drawerLayout.closeDrawer(GravityCompat.START)
         when (item.itemId) {

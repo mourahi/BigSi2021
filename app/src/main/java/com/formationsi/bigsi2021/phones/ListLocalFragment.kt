@@ -8,9 +8,10 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.formationsi.bigsi2021.PrincipalViewModel
 import com.formationsi.bigsi2021.R
 import com.formationsi.bigsi2021.adapter.RecycleAdapterFavoris
 import kotlinx.coroutines.Dispatchers
@@ -24,13 +25,11 @@ class ListLocalFragment : Fragment() {
         fun newInstance() = ListLocalFragment()
     }
 
-    private val viewModel: ListLocalViewModel by lazy {
-        ViewModelProvider(this).get(ListLocalViewModel::class.java)
-    }
+    private val viewModel: PrincipalViewModel by activityViewModels()
 
-    private lateinit var recycleview:RecyclerView
-    private lateinit var  progressBar:ProgressBar
-    private lateinit var txt_compteur :TextView
+    private lateinit var recycleview: RecyclerView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var txt_compteur: TextView
     private lateinit var adapter: RecycleAdapterFavoris
 
     override fun onAttach(context: Context) {
@@ -58,18 +57,17 @@ class ListLocalFragment : Fragment() {
         adapter = RecycleAdapterFavoris(listOf())
         recycleview.adapter = adapter
 
-        viewModel.getLocalContacts().observe(viewLifecycleOwner,{
+        viewModel.listLocalPhones.observe(viewLifecycleOwner, {
             adapter = RecycleAdapterFavoris(it)
             recycleview.adapter = adapter
             progressBar.visibility = View.GONE
         })
 
-        viewModel.compteurLocalContact.observe(viewLifecycleOwner,{
+        viewModel.compteurLocalContact.observe(viewLifecycleOwner, {
             txt_compteur.text = it.toString()
         })
 
     }
-
 
 
 }

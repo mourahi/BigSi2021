@@ -6,9 +6,9 @@ import com.formationsi.bigsi2021.db.SchoolRepository
 
 class SchoolApplication : Application() {
 
-        private val database by lazy { SchoolDatabase.getDatabase(this) }
-        val goodrepository by lazy {
-                SchoolRepository(database.schoolDao(),this)
-        }
+    private val database by lazy { SchoolDatabase.getDatabase(this) }
+    val goodrepository by lazy {
+        SchoolRepository(database.schoolDao(), this)
+    }
 
 }

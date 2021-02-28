@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.formationsi.bigsi2021.PrincipalViewModel
 import com.formationsi.bigsi2021.R
 import com.formationsi.bigsi2021.adapter.RecycleAdapterPhones
 import com.formationsi.bigsi2021.db.School
@@ -18,9 +19,7 @@ class ListPhonesFragment : Fragment() {
     private lateinit var recycle: RecyclerView
     private lateinit var adapter: RecycleAdapterPhones
 
-    private val myviewmodel: ListPhonesViewModel by lazy {
-        ViewModelProvider(this).get(ListPhonesViewModel::class.java)
-    }
+    private val principalViewModel: PrincipalViewModel by activityViewModels()
 
     companion object {
         fun newInstance() = ListPhonesFragment()
@@ -36,11 +35,19 @@ class ListPhonesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+/*       Transformations.map(myviewmodel._dataphone) {
+            mylist = if (!it.isNullOrEmpty()) it else mylist
+           recycle.adapter = RecycleAdapterPhones(mylist)
+        }*/
+
+        principalViewModel.getDataPhones()
+
         recycle = view.findViewById(R.id.recycle_phones)
         recycle.layoutManager = LinearLayoutManager(view.context)
         adapter = RecycleAdapterPhones(mylist)
         recycle.adapter = adapter
-        myviewmodel.getData().observe(viewLifecycleOwner, {
+
+        principalViewModel.dataphone.observe(viewLifecycleOwner, {
             mylist = if (!it.isNullOrEmpty()) it else mylist
             adapter = RecycleAdapterPhones(mylist)
             recycle.adapter = adapter
