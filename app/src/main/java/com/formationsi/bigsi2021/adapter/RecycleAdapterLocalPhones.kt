@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.formationsi.bigsi2021.R
-import com.formationsi.bigsi2021.adapter.RecycleAdapterFavoris.MyViewHolder
+import com.formationsi.bigsi2021.adapter.RecycleAdapterLocalPhones.MyViewHolder
 import com.formationsi.bigsi2021.db.School
 
-class RecycleAdapterFavoris(private val mylist: List<School>) :
+class RecycleAdapterLocalPhones(private val mylist: List<School>) :
     RecyclerView.Adapter<MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {

@@ -15,9 +15,11 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.viewpager2.widget.ViewPager2
 import com.formationsi.bigsi2021.adapter.AdapterTabs
-import com.formationsi.bigsi2021.others.OtherActivity
+import com.formationsi.bigsi2021.local.LocalPhonesActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -28,11 +30,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var tablayout: TabLayout
     private val REQUEST_READ_CONTACTS = 10
     private val principalViewModel: PrincipalViewModel by viewModels()
-    private val me = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        principalViewModel.getDataTupdate()
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -40,9 +43,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout = findViewById(R.id.drawerlayout)
         val actionBarDrawerToggle =
             ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.Open, R.string.Close)
-        drawerLayout.addDrawerListener(actionBarDrawerToggle)
-        actionBarDrawerToggle.isDrawerIndicatorEnabled = true
-        actionBarDrawerToggle.syncState()
+            drawerLayout.addDrawerListener(actionBarDrawerToggle)
+        with(actionBarDrawerToggle){
+            isDrawerIndicatorEnabled = true
+            syncState()
+        }
+
 
         val navigationView = findViewById<NavigationView>(R.id.nav_drawer)
         navigationView.setNavigationItemSelectedListener(this)
@@ -75,7 +81,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(txtsearch: String?): Boolean {
-                principalViewModel.getDataPhones("%${txtsearch.toString()}%")
+               // principalViewModel.getDataPhones("%${txtsearch.toString()}%")
                 return false
             }
 
@@ -85,11 +91,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         principalViewModel.getDataPhones("%${txtsearch.toString()}%")
                     }
                     1 -> {
-                        if(!principalViewModel.templistLocalPhones.value.isNullOrEmpty()) principalViewModel.getLocalContacts(txtsearch.toString())
+                       // if(!principalViewModel.templistLocalPhones.value.isNullOrEmpty()) principalViewModel.getLocalContacts(txtsearch.toString())
                     }
                 }
-
-
                 return false
             }
 
@@ -102,13 +106,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout.closeDrawer(GravityCompat.START)
         when (item.itemId) {
             R.id.id_menu_other -> {
-                val intent = Intent(this, OtherActivity::class.java)
+                val intent = Intent(this, LocalPhonesActivity::class.java)
                 startActivity(intent)
             }
             else -> Log.d("adil", "home encore ")
         }
         return true
     }
+
 
     private fun requestPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(

@@ -1,11 +1,10 @@
 package com.formationsi.bigsi2021.db
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.MutableLiveData
+import com.formationsi.bigsi2021.MyConnection
+import com.formationsi.bigsi2021.getJSONArrayFromInternet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -17,8 +16,60 @@ import java.io.Reader
 import java.net.HttpURLConnection
 import java.net.URL
 
+class TupdateRepository(private val tupdateDao:TupdateDao){
+    //var dataTupdate = tupdateDao.getAlltUpdate()
+    fun getStateUpdate(){
 
-class SchoolRepository(private val schoolDao: SchoolDao, private val context: Context) {
+            try {
+                val aa = tupdateDao.getAlltUpdate()
+            }catch (e:Exception){
+                Log.d("adil","erreur = $e")
+            }
+
+            getJSONArrayFromInternet(3).observeForever{
+                if(!it.isNullOrEmpty()) {
+                    val a = mapToTupdate(it).value
+                    Log.d("adil"," a=$a")
+                    insertMultiple(a!!)
+                }
+            }
+
+
+
+    }
+    @WorkerThread
+    fun insertMultiple(s: List<Tupdate>) {
+        tupdateDao.insertMutliple(s)
+    }
+
+    private fun mapToTupdate(src: ArrayList<MutableMap<String, String>>): MutableLiveData<List<Tupdate>>{
+        Log.d("adil","src = $src")
+        val resulat = MutableLiveData<List<Tupdate>>()
+        val li = mutableListOf<Tupdate>()
+        if (src.size > 0) {
+            src.forEach {
+                li.add(
+                    Tupdate(
+                        it["numero"].toString(),
+                        it["title"].toString()
+                    )
+                )
+            }
+        }
+        resulat.value = li
+        return resulat
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun insert(tupdate: Tupdate) {
+        tupdateDao.insert(tupdate)
+    }
+
+}
+
+
+class SchoolRepository(private val schoolDao: SchoolDao) {
     private var _datasheet = MutableLiveData<List<School>>()
 
     fun getData(txtsearch: String = ""): MutableLiveData<List<School>> {
@@ -31,7 +82,7 @@ class SchoolRepository(private val schoolDao: SchoolDao, private val context: Co
                 if (!roo.isNullOrEmpty()) {
                     Log.d("adimou", " resulat cherche dans le ROOM")
                     _datasheet.value = roo
-                } else if (isConnected()) {
+                } else if (MyConnection.isInternetOn()) {
                     getJSONArrayFromInternet().observeForever {
                         val a = mapToSchool(it).value
                        if(!a.isNullOrEmpty()) {
@@ -56,68 +107,8 @@ class SchoolRepository(private val schoolDao: SchoolDao, private val context: Co
         schoolDao.insertMutliple(s)
     }
 
-    private fun isConnected(): Boolean {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-        return activeNetwork?.isConnectedOrConnecting == true
-    }
 
-    private fun getJSONArrayFromInternet(
-        idSheet: String = "1F49X3Jo823vUJ9hrr1vheCeCI2LhCIN_gf9sxMrgK5k"
-    ): MutableLiveData<ArrayList<MutableMap<String, String>>> {
-        Log.d("adimou", "getJSONArrayFromInternet")
-        //_state.value = "START"
-        var myLocalList: ArrayList<MutableMap<String, String>> = ArrayList()
-        val livedataMyLocalList = MutableLiveData<ArrayList<MutableMap<String, String>>>()
-        val url =
-            URL("https://spreadsheets.google.com/feeds/list/$idSheet/1/public/values?alt=json")
-        val urlConnection = url.openConnection() as HttpURLConnection
-        GlobalScope.launch(Dispatchers.IO) {
-            try {
-                //_state.value = "CONNECTED"
-                val da = BufferedInputStream(urlConnection.inputStream)
-                val bufferedReader = BufferedReader(InputStreamReader(da) as Reader?)
-                val stringBuilder = StringBuilder()
-                bufferedReader.forEachLine {
-                    stringBuilder.append(it)
-                }
-                val res =
-                    JSONObject(stringBuilder.toString()).getJSONObject("feed").getJSONArray("entry")
-                Log.d("adil", "RECHERCHE connexion  length=" + res.length())
-                var mycol = mutableListOf<String>()
-                for (i in 0 until res.length()) {
-                    val obj: MutableMap<String, String> = mutableMapOf()
-                    if (i == 0) {
-                        res.getJSONObject(i).keys().forEach {
-                            if (it.startsWith("gsx$") && !mycol.contains(it)) mycol.add(it)
-                        }
-                        mycol = mycol.map { it.replace("gsx$", "") }.toMutableList()
-                        //_col.value = mycol
-                    }
-                    //Log.d("adil", "i= $i  mycol = $mycol ")
-                    for (c in mycol) {
-                        obj[c] = res.getJSONObject(i).getJSONObject("gsx$$c")["\$t"].toString()
-                    }
-                    myLocalList.add(obj)
-                }
 
-            } catch (e: Exception) {
-                Log.d("adil", "PROBLEME récuperation depuis internet exception = " + e.message)
-                // _state.value = "Erreur Serveur"
-                GlobalScope.launch(Dispatchers.Main) {
-                    myLocalList = arrayListOf()
-                    livedataMyLocalList.value = myLocalList
-                }
-            } finally {
-                urlConnection.disconnect()
-                Log.d("adil", "deconnnexion")
-                GlobalScope.launch(Dispatchers.Main) {
-                    livedataMyLocalList.value = myLocalList
-                }
-            }
-        }
-        return livedataMyLocalList
-    }
 
     private fun mapToSchool(src: ArrayList<MutableMap<String, String>>): MutableLiveData<List<School>>{
         Log.d("adil","src = $src")

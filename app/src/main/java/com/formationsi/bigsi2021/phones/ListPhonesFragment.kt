@@ -35,11 +35,6 @@ class ListPhonesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-/*       Transformations.map(myviewmodel._dataphone) {
-            mylist = if (!it.isNullOrEmpty()) it else mylist
-           recycle.adapter = RecycleAdapterPhones(mylist)
-        }*/
-
         principalViewModel.getDataPhones()
 
         recycle = view.findViewById(R.id.recycle_phones)

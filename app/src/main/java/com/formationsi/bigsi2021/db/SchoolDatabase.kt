@@ -48,48 +48,45 @@ interface SchoolDao {
 
 }
 
-@Database(entities = [School::class], version = 1)
+@Entity(tableName = "tupdate")
+data class Tupdate(
+    @PrimaryKey
+    val numero:String,
+    val title:String
+)
+@Dao
+interface TupdateDao{
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(s: Tupdate)
+
+    @Query("SELECT * FROM tupdate")
+    fun getAlltUpdate(): LiveData<List<Tupdate>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertMutliple(s: List<Tupdate>)
+}
+
+@Database(entities = [School::class, Tupdate::class], version = 1)
 abstract class SchoolDatabase : RoomDatabase() {
     abstract fun schoolDao(): SchoolDao
+    abstract fun tupdateDao(): TupdateDao
 
     companion object {
         @Volatile
         private var INSTANCE: SchoolDatabase? = null
 
-        fun getDatabase(
-            context: Context
-        ): SchoolDatabase {
+        fun getDatabase(context: Context): SchoolDatabase {
 
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     SchoolDatabase::class.java,
-                    "bigs_imourahi2021v11"
+                    "bigs_imourahi2021v20"
                 ).allowMainThreadQueries()
                     .build()
                 INSTANCE = instance
-                // return instance
                 instance
             }
-        }
-
-        private class SchoolDatabaseCallback(
-            private val scope: CoroutineScope
-        ) : RoomDatabase.Callback() {
-            override fun onCreate(db: SupportSQLiteDatabase) {
-                super.onCreate(db)
-                INSTANCE?.let { database ->
-                    scope.launch(Dispatchers.IO) {
-                        populateDatabase(database.schoolDao())
-                    }
-                }
-            }
-        }
-
-        fun populateDatabase(schoolDao: SchoolDao) {
-            schoolDao.deleteAll()
-            /* var s = School("عادل موراحي","","","منظومة الاعلام",)
-            schoolDao.insert(s) */
         }
     }
 }
